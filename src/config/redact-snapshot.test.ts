@@ -78,11 +78,7 @@ describe("redactConfigSnapshot", () => {
       },
       channels: {
         telegram: {
-          accounts: {
-            default: {
-              botToken: "123456:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef",
-            },
-          },
+          botToken: "123456:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef",
           webhookSecret: "telegram-webhook-secret-value-1234",
         },
         slack: {
@@ -105,7 +101,7 @@ describe("redactConfigSnapshot", () => {
 
     expect(cfg.gateway.auth.token).toBe(REDACTED_SENTINEL);
     expect(cfg.gateway.auth.password).toBe(REDACTED_SENTINEL);
-    expect(cfg.channels.telegram.accounts.default.botToken).toBe(REDACTED_SENTINEL);
+    expect(cfg.channels.telegram.botToken).toBe(REDACTED_SENTINEL);
     expect(cfg.channels.telegram.webhookSecret).toBe(REDACTED_SENTINEL);
     expect(cfg.channels.slack.botToken).toBe(REDACTED_SENTINEL);
     expect(cfg.channels.slack.signingSecret).toBe(REDACTED_SENTINEL);

@@ -4,10 +4,6 @@ Docs: https://docs.openclaw.ai
 
 ## Unreleased
 
-### Fixes
-
-- Channels/Telegram: document that bot tokens belong under `channels.telegram.accounts.<id>.botToken`, update help text and reload tests, and keep the default account able to fall back to `TELEGRAM_BOT_TOKEN` so existing configs keep working while aligning docs with runtime behavior.
-
 ## 2026.2.22 (Unreleased)
 
 ### Changes

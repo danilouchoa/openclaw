@@ -500,7 +500,7 @@ const CHANNELS_AGENTS_TARGET_KEYS = [
   "channels.slack.userToken",
   "channels.slack.userTokenReadOnly",
   "channels.telegram",
-  "channels.telegram.accounts.*.botToken",
+  "channels.telegram.botToken",
   "channels.telegram.capabilities.inlineButtons",
   "channels.whatsapp",
 ] as const;

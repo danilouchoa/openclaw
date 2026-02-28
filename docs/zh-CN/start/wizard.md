@@ -307,7 +307,7 @@ Gateway 网关通过 RPC 暴露向导流程（`wizard.start`、`wizard.next`、`
 - `agents.defaults.workspace`
 - `agents.defaults.model` / `models.providers`（如果选择了 Minimax）
 - `gateway.*`（模式、绑定、认证、tailscale）
-- `channels.telegram.accounts.default.botToken`、`channels.discord.token`、`channels.signal.*`、`channels.imessage.*`
+- `channels.telegram.botToken`、`channels.discord.token`、`channels.signal.*`、`channels.imessage.*`
 - 当你在提示中选择加入时的渠道允许列表（Slack/Discord/Matrix/Microsoft Teams）（名称在可能时解析为 ID）。
 - `skills.install.nodeManager`
 - `wizard.lastRunAt`

@@ -1195,8 +1195,8 @@ export const FIELD_HELP: Record<string, string> = {
     "Enables concise indicator-style heartbeat rendering instead of verbose status text where supported. Use indicator mode for dense dashboards with many active channels.",
   "channels.telegram.configWrites":
     "Allow Telegram to write config in response to channel events/commands (default: true).",
-  "channels.telegram.accounts.*.botToken":
-    "Telegram bot token used to authenticate the Bot API for each account. Define it under `channels.telegram.accounts.<id>.botToken` (default account also accepts `TELEGRAM_BOT_TOKEN` or `channels.telegram.accounts.default.tokenFile`).",
+  "channels.telegram.botToken":
+    "Telegram bot token used to authenticate Bot API requests for this account/provider config. Use secret/env substitution and rotate tokens if exposure is suspected.",
   "channels.telegram.capabilities.inlineButtons":
     "Enable Telegram inline button components for supported command and interaction surfaces. Disable if your deployment needs plain-text-only compatibility behavior.",
   "channels.slack.configWrites":
