@@ -38,7 +38,11 @@ Status: production-ready for bot DMs + groups via grammY. Long polling is the de
   channels: {
     telegram: {
       enabled: true,
-      botToken: "123:abc",
+      accounts: {
+        default: {
+          botToken: "123:abc",
+        },
+      },
       dmPolicy: "pairing",
       groups: { "*": { requireMention: true } },
     },
@@ -712,7 +716,7 @@ More help: [Channel troubleshooting](/channels/troubleshooting).
 Primary reference:
 
 - `channels.telegram.enabled`: enable/disable channel startup.
-- `channels.telegram.botToken`: bot token (BotFather).
+- `channels.telegram.accounts.default.botToken`: bot token (BotFather).
 - `channels.telegram.tokenFile`: read token from file path.
 - `channels.telegram.dmPolicy`: `pairing | allowlist | open | disabled` (default: pairing).
 - `channels.telegram.allowFrom`: DM allowlist (numeric Telegram user IDs). `open` requires `"*"`. `openclaw doctor --fix` can resolve legacy `@username` entries to IDs.
@@ -755,7 +759,7 @@ Primary reference:
 
 Telegram-specific high-signal fields:
 
-- startup/auth: `enabled`, `botToken`, `tokenFile`, `accounts.*`
+- startup/auth: `enabled`, `accounts.*.botToken`, `accounts.*.tokenFile`
 - access control: `dmPolicy`, `allowFrom`, `groupPolicy`, `groupAllowFrom`, `groups`, `groups.*.topics.*`
 - command/menu: `commands.native`, `customCommands`
 - threading/replies: `replyToMode`

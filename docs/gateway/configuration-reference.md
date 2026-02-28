@@ -178,7 +178,7 @@ WhatsApp runs through the gateway's web channel (Baileys Web). It starts automat
 }
 ```
 
-- Bot token: `channels.telegram.botToken` or `channels.telegram.tokenFile`, with `TELEGRAM_BOT_TOKEN` as fallback for the default account.
+- Bot token: `channels.telegram.accounts.default.botToken` or `channels.telegram.accounts.default.tokenFile`, with `TELEGRAM_BOT_TOKEN` as fallback for the default account. Add more accounts under `channels.telegram.accounts.<id>` as needed.
 - `configWrites: false` blocks Telegram-initiated config writes (supergroup ID migrations, `/config set|unset`).
 - Telegram stream previews use `sendMessage` + `editMessageText` (works in direct and group chats).
 - Retry policy: see [Retry policy](/concepts/retry).

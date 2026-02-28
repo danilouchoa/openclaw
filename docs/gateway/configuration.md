@@ -94,9 +94,13 @@ When validation fails:
       channels: {
         telegram: {
           enabled: true,
-          botToken: "123:abc",
           dmPolicy: "pairing",   // pairing | allowlist | open | disabled
           allowFrom: ["tg:123"], // only for allowlist/open
+          accounts: {
+            default: {
+              botToken: "123:abc",
+            },
+          },
         },
       },
     }

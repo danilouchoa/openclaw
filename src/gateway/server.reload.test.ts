@@ -214,7 +214,11 @@ describe("gateway hot reload", () => {
         browser: { enabled: true },
         web: { enabled: true },
         channels: {
-          telegram: { botToken: "token" },
+          telegram: {
+            accounts: {
+              default: { botToken: "token" },
+            },
+          },
           discord: { token: "token" },
           signal: { account: "+15550000000" },
           imessage: { enabled: true },
@@ -229,7 +233,7 @@ describe("gateway hot reload", () => {
             "agents.defaults.heartbeat.every",
             "browser.enabled",
             "web.enabled",
-            "channels.telegram.botToken",
+            "channels.telegram.accounts.default.botToken",
             "channels.discord.token",
             "channels.signal.account",
             "channels.imessage.enabled",
