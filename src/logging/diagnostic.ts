@@ -1,3 +1,4 @@
+import { isSubagentSessionRunActive } from "../agents/subagent-registry.js";
 import { loadConfig } from "../config/config.js";
 import type { OpenClawConfig } from "../config/config.js";
 import { emitDiagnosticEvent } from "../infra/diagnostic-events.js";
@@ -36,6 +37,31 @@ function loadCommandPollBackoffRuntime() {
 
 function markActivity() {
   lastActivityAt = Date.now();
+}
+
+function reconcileOrphanedSubagentProcessingSessions(): number {
+  let reconciled = 0;
+  for (const [, state] of diagnosticSessionStates) {
+    if (state.state !== "processing") {
+      continue;
+    }
+    const sessionKey = state.sessionKey?.trim();
+    if (!sessionKey || !sessionKey.includes(":subagent:")) {
+      continue;
+    }
+    if (isSubagentSessionRunActive(sessionKey)) {
+      continue;
+    }
+    state.state = "idle";
+    state.queueDepth = 0;
+    reconciled += 1;
+    if (diag.isEnabled("debug")) {
+      diag.debug(
+        `diagnostic reconcile: sessionId=${state.sessionId ?? "unknown"} sessionKey=${sessionKey} reason=no_active_subagent_run`,
+      );
+    }
+  }
+  return reconciled;
 }
 
 export function resolveStuckSessionWarnMs(config?: OpenClawConfig): number {
@@ -318,6 +344,7 @@ export function logToolLoopAction(
 }
 
 export function logActiveRuns() {
+  reconcileOrphanedSubagentProcessingSessions();
   const activeSessions = Array.from(diagnosticSessionStates.entries())
     .filter(([, s]) => s.state === "processing")
     .map(
@@ -345,6 +372,7 @@ export function startDiagnosticHeartbeat(config?: OpenClawConfig) {
     }
     const stuckSessionWarnMs = resolveStuckSessionWarnMs(heartbeatConfig);
     const now = Date.now();
+    reconcileOrphanedSubagentProcessingSessions();
     pruneDiagnosticSessionStates(now, true);
     const activeCount = Array.from(diagnosticSessionStates.values()).filter(
       (s) => s.state === "processing",

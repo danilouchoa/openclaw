@@ -1,5 +1,9 @@
 import fs from "node:fs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  addSubagentRunForTests,
+  resetSubagentRegistryForTests,
+} from "../agents/subagent-registry.js";
 import { onDiagnosticEvent, resetDiagnosticEventsForTest } from "../infra/diagnostic-events.js";
 import {
   diagnosticSessionStates,
@@ -19,9 +23,11 @@ describe("diagnostic session state pruning", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     resetDiagnosticSessionStateForTest();
+    resetSubagentRegistryForTests({ persist: false });
   });
 
   afterEach(() => {
+    resetSubagentRegistryForTests({ persist: false });
     resetDiagnosticSessionStateForTest();
     vi.useRealTimers();
   });
@@ -61,6 +67,54 @@ describe("diagnostic session state pruning", () => {
     expect(bySessionId).toBe(keyed);
     expect(bySessionId.sessionKey).toBe("agent:main:discord:channel:c1");
     expect(getDiagnosticSessionStateCountForTest()).toBe(1);
+  });
+
+  it("reconciles finished subagent sessions before reporting active diagnostics", () => {
+    const liveSessionKey = "agent:controlclaw-runner:subagent:live";
+    const endedSessionKey = "agent:controlclaw-runner:subagent:ended";
+    const events: Array<Record<string, unknown>> = [];
+    const unsubscribe = onDiagnosticEvent((event) => {
+      events.push(event as Record<string, unknown>);
+    });
+
+    addSubagentRunForTests({
+      runId: "run-live",
+      childSessionKey: liveSessionKey,
+      requesterSessionKey: "agent:controlclaw-runner:main",
+      requesterDisplayKey: "agent:controlclaw-runner:main",
+      task: "live task",
+      cleanup: "delete",
+      spawnMode: "run",
+      createdAt: Date.now(),
+      startedAt: Date.now(),
+    });
+    logSessionStateChange({
+      sessionId: "live-session",
+      sessionKey: liveSessionKey,
+      state: "processing",
+    });
+    logSessionStateChange({
+      sessionId: "ended-session",
+      sessionKey: endedSessionKey,
+      state: "processing",
+    });
+
+    try {
+      startDiagnosticHeartbeat({
+        diagnostics: {
+          enabled: true,
+          stuckSessionWarnMs: 60_000,
+        },
+      });
+      vi.advanceTimersByTime(31_000);
+    } finally {
+      unsubscribe();
+    }
+
+    const heartbeat = events.findLast((event) => event.type === "diagnostic.heartbeat");
+    expect(heartbeat).toMatchObject({ type: "diagnostic.heartbeat", active: 1 });
+    expect(getDiagnosticSessionState({ sessionKey: liveSessionKey }).state).toBe("processing");
+    expect(getDiagnosticSessionState({ sessionKey: endedSessionKey }).state).toBe("idle");
   });
 });
 
